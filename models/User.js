@@ -6,8 +6,8 @@ const UserSchema= new Schema({
     email:({type:String,required:true,unique:true}),
     password:({type:String,required:true }),
     contact:({type:String,required:true}),
-    CNIC:({type:String,require:true}),
-    address:({type:String,require:true}),
+    CNIC:({type:String}),
+    address:({type:String}),
     role:({type:Schema.Types.ObjectId,ref:"roles"})
     
 })
