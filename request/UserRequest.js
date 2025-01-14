@@ -1,9 +1,27 @@
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User'); // Adjust the path as necessary
+const user = require('../models/User');
 class UserRequest {
   static validationRules(update=false) {
     const rules = [
       body('username').isString().withMessage('Name must be a string'),
+      body('CNIC').optional().isString().withMessage("CNIC must be a string").matches(/^\d{5}-\d{7}-\d{1}$/)
+      .withMessage("CNIC must be in the format XXXXX-XXXXXXX-X").custom(async (value) => {
+        const existingCNIC = await user.findOne({CNIC:value});
+        if (existingCNIC) {
+          throw new Error("CNIC must be unique");
+        }
+        return true;
+      }),
+      body('address')
+      .isString().optional().withMessage("Address must be a string")
+      .isLength({ min: 5, max: 255 }).withMessage("Address must be between 5 and 255 characters")
+      .trim().escape(),
+  
+    body('contact')
+      .isString().withMessage("Contact must be a string")
+      .matches(/^((\+92)|0)?3\d{2}-\d{7}$/).withMessage("Contact must be a valid Pakistani number (e.g., +92300-1234567 or 0300-1234567)"),
+  
       body('email')
         .isEmail().withMessage('Email must be a valid email address')
         .custom(async (value, { req }) => {

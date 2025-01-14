@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 const user = require("../models/User");
 const bcrypt = require('bcrypt');
 require("dotenv").config();
-const key=process.env.KEY;
+const key = process.env.KEY;
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -93,9 +93,9 @@ class UserService {
             const role_id = await Roles.findOne({
                 role_name: { $regex: /^guest$/i }
             });
-            const data = (({ username, email,password }) => ({ username, email,password }))(req.body)
+            const data = (({ username, email, password, contact, CNIC, address }) => ({ username, email, password, contact, CNIC, address }))(req.body)
             const hashedPassword = await bcrypt.hash(data.password, 10);
-            data.password=hashedPassword;
+            data.password = hashedPassword;
             data.role = role_id._id;
             const verificationCode = Math.floor(100000 + Math.random() * 900000);
             this.code = verificationCode;
@@ -119,7 +119,7 @@ class UserService {
             if (data.code != this.code) {
                 return res.status(400).json({ message: `user inserted a wrong code` });
             }
-            
+
             const registered = await user.insertMany([this.data]);
             this.data = null; this.code = null;
             return res.status(200).json({ message: "user registered successfully", data: registered });
@@ -132,12 +132,12 @@ class UserService {
     async login(req, res) {
         try {
             const data = (({ email, password }) => ({ email, password }))(req.body);
-            const userdata = await user.findOne({email:data.email});
+            const userdata = await user.findOne({ email: data.email });
             if (!userdata) {
                 res.status(404).json({ message: "No Record Found" });
                 return;
             }
-            const isPasswordValid = await bcrypt.compare(data.password, userdata.password);  
+            const isPasswordValid = await bcrypt.compare(data.password, userdata.password);
 
             if (!isPasswordValid) {
                 return res.status(400).json({ message: "Invalid password" });
