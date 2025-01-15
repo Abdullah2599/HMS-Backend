@@ -1,4 +1,5 @@
-const Permission = require("../models/Permission");
+const Permission = require("../models/joins/Permission");
+
 
 class PermissionService {
     async create(req, res) {
