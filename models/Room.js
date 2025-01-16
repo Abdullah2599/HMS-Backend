@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 const RoomSchema= new Schema({
-    room_code:({type:String,required:true,unique:true}),
-    room_name:({type:String,required:true,enum:["available","disabled","in_work"]}),
+    roomCode:({type:String,required:true,unique:true}),
+    roomTitle:({type:String,required:true}),
     description:({type:String}),
-    room_type:({type:String,required:true,enum:["available","disabled","in_work"]}),
-    avaibility:({type:String,enum:["available","disabled","in_work"]}),
+    roomType:({type:String,required:true,enum:["available","disabled","in_work"]}),
+    avaibility:({type:String,enum:["available","disabled","occupied","in_work"],default:"available"}),
     size:({type:Number}),
     person:({type:Number,required:true}),
     price:({type:Number, required:true}),
@@ -15,7 +15,7 @@ const RoomSchema= new Schema({
 
 });
 
-RoomSchema.virtual("rommbookings",{
+RoomSchema.virtual("roombookings",{
     localField:"_id",
     foreignField:"room",
     ref:"booking",
