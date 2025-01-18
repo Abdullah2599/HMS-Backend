@@ -8,6 +8,7 @@ const UserSchema= new Schema({
     contact:({type:String,required:true}),
     CNIC:({type:String}),
     address:({type:String}),
+    status:({type:String,enum:["Active","InActive"],default:"Active"}),
     role:({type:Schema.Types.ObjectId,ref:"roles"})
     
 })
