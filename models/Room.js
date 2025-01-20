@@ -21,6 +21,12 @@ RoomSchema.virtual("roombookings",{
     ref:"booking",
     justOne:false
 });
+RoomSchema.virtual("roomfacility",{
+    localField:"_id",
+    foreignField:"room",
+    ref:"room_facility",
+    justOne:false
+});
 
 RoomSchema.set("toJSON",{virtuals:true})
 RoomSchema.set("toObject",{virtuals:true})

@@ -15,5 +15,13 @@ class FacilityService{
             return res.status(400).json({ message: `error : ${error}` });
         }
     }
+    async list(req,res){
+        try {
+            const data =await Facility.find();
+            return res.status(200).json({ message: `Facility data` , data:data});
+        } catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
 }
 module.exports=new FacilityService

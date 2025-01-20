@@ -6,6 +6,7 @@ class FacilityController{
         await FacilityService.create(req,res)
     }
     async list(req,res){
+        await FacilityService.list(req,res);
     }
     async delete(req,res){
     }
