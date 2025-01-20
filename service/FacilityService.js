@@ -6,7 +6,7 @@ class FacilityService{
             const body = (({name,icon}) => ({name,icon}))(req.body);
             const Facilitydata = await Facility.findOne({name:body.name});
             if(Facilitydata){
-
+                return res.status(400).json({ message: `error : Facility already exist!` });
             }
             const data= await Facility.insertMany([body]);
             return res.status(200).json({ message: `Facility Registered` , data:data});

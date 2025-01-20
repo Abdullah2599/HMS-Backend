@@ -16,5 +16,8 @@ class AuthController{
     async SuperAdminlogin(req,res){
         await UserService.SuperAdminlogin(req,res);
     }
+    async userStatus(req,res){
+        await UserService.userStatus(req,res);
+    }
 }
 module.exports=new AuthController;

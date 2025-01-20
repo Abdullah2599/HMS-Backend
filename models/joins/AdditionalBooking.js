@@ -6,5 +6,5 @@ const AdditionalBookingSchema= new Schema({
     booking:({type:Schema.Types.ObjectId,ref:"booking"})
 })
 AdditionalBookingSchema.index({service:1,booking:1},{unique:true})
-const AdditionalBooking = mongoose.model("room_facility",AdditionalBookingSchema);
+const AdditionalBooking = mongoose.model("additional_booking",AdditionalBookingSchema);
 module.exports=AdditionalBooking;

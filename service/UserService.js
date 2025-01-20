@@ -78,9 +78,17 @@ class UserService {
     async login(req, res) {
         try {
             const data = (({ email, password }) => ({ email, password }))(req.body);
-            const userdata = await user.findOne({ email: data.email });
+            const userdata = await user.findOne({ email: data.email }).populate({
+                path: 'role',
+                model: 'roles' // Ensure that your 'roles' model is correctly imported and referenced
+            });
+            
             if (!userdata) {
                 res.status(404).json({ message: "No Record Found" });
+                return;
+            }
+            if(userdata.status === "InActive"){
+                res.status(400).json({ message: "Inactive UserId" });
                 return;
             }
             const isPasswordValid = await bcrypt.compare(data.password, userdata.password);
@@ -91,7 +99,8 @@ class UserService {
             const payload = {
                 id: userdata._id,
                 name: userdata.name,
-                email: userdata.email
+                email: userdata.email,
+                rolename:userdata.role.role_name
             }
             const token = jwt.sign(payload, key, { expiresIn: "2hr" });
             res.status(200).json({ message: "token create", token: token })
@@ -130,9 +139,26 @@ class UserService {
             return res.status(400).json({ message: `error : ${err}` });
         }
     }
-    async logout(req, res) {
 
+    async userStatus(req, res) {
+        try {
+            const data = (({ status }) => ({ status }))(req.body);
+            const user_id=req.params.id;
+            const user_data= await user.findOne({_id:user_id});
+            if(data.status=="Active" && user_data.status=="Active"){
+                return res.status(400).json({ message: `error : User Already Active` });
+            }
+            if(data.status=="InActive" && user_data.status=="InActive"){
+                return res.status(400).json({ message: `error : User Already InActive` });
+            }
+            const update = await user.findByIdAndUpdate(user_id,{status:data.status}); 
+            res.status(200).json({ message: `User ${data.status} successfully`})
+        }
+        catch (err) {
+            return res.status(400).json({ message: `error : ${err}` });
+        }
     }
+   
 }
 
 module.exports = new UserService;
