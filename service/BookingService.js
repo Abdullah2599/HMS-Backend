@@ -3,10 +3,12 @@ const booking = require("../models/Booking");
 const Room = require("../models/Room");
 const generateCode = require("../thirdparty/codegenerator");
 const additional_booking = require("../models/joins/AdditionalBooking");
+const { bookingEmail } = require("../thirdparty/mailer");
 class BookingService {
     async create(req, res) {
         try {
             let AdditionalServiceData= [];
+            let services = []
             let totalamount=0;
             const body = (({room,valid_to,valid_from}) => ({room,valid_to,valid_from}))(req.body);
             body.booking_code=generateCode();
@@ -36,6 +38,7 @@ class BookingService {
                 const serviceData = await AdditionalService.findOne({ _id: item.service });
                 console.log(serviceData)
                 if (serviceData) {
+                    services.push(serviceData)
                     totalamount += serviceData.price;
                     AdditionalServiceData.push(record);
                 }
@@ -43,6 +46,7 @@ class BookingService {
             body.totalBill = totalamount + roomdata.price;
             const addservice= await additional_booking.insertMany(AdditionalServiceData);
             const update= await booking.findByIdAndUpdate(data.id,body);
+            bookingEmail(req.user.email,roomdata.roomCode,services,body.totalBill);
             return res.status(200).json({ message: `Booking Registered`, Bookingdata: update ,AdditionalService:addservice});
 
         } catch (error) {
@@ -51,8 +55,42 @@ class BookingService {
     }
     async list(req, res) {
         try {
+            const data = await booking.find().populate({
+                path: "service", populate: {
+                    path: "service",
+                    model: "additionalservice"
+                }
+            });
 
             return res.status(200).json({ message: `Booking listing`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
+
+    async bookingRecordofGuest(req, res) {
+        try {
+            const user=req.user.id;
+            const data = await booking.find({guest:user});
+            if(!data){
+                return res.status(400).json({ message: `error : Booking Not Found` });
+            }
+            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
+
+    async bookingRecord(req, res) {
+        try {
+            const booking_code=req.params.code;
+            const data = await booking.findOne({booking_code:booking_code});
+            if(!data){
+                return res.status(400).json({ message: `error : Booking Not Found` });
+            }
+            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
         }
         catch (error) {
             return res.status(400).json({ message: `error : ${error}` });

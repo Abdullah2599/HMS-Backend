@@ -10,5 +10,13 @@ const BookingSchema= new Schema({
     totalBill:({type:Number,require:true})
    
 })
+BookingSchema.virtual("service",{
+    localField:"_id",
+    foreignField:"booking",
+    ref:"additional_booking",
+    justOne:false
+});
+BookingSchema.set("toJSON",{virtuals:true})
+BookingSchema.set("toObject",{virtuals:true})
 const booking = mongoose.model("booking",BookingSchema);
 module.exports=booking;

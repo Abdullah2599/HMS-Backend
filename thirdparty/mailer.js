@@ -81,6 +81,109 @@ class Mailer{
             return res.status(400).json({ message: `error : ${error}` });
         }
     }
+
+    async  bookingEmail(email, roomData, extraService, totalBill) {
+        try {
+            const info = await transporter.sendMail({
+                from: '"Hotel Booking Confirmation" <ua5495404@gmail.com>',
+                to: email,
+                subject: "Your Booking Confirmation",
+                html: `
+                <html>
+                    <head>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f9f9f9;
+                                margin: 0;
+                                padding: 0;
+                                line-height: 1.6;
+                                color: #333333;
+                            }
+                            .container {
+                                max-width: 600px;
+                                margin: 30px auto;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                overflow: hidden;
+                                padding: 20px;
+                            }
+                            h2 {
+                                text-align: center;
+                                color: #444444;
+                                font-size: 24px;
+                                margin-bottom: 20px;
+                            }
+                            .info {
+                                margin-bottom: 20px;
+                            }
+                            .info p {
+                                margin: 5px 0;
+                                font-size: 16px;
+                            }
+                            .details {
+                                margin: 20px 0;
+                                border: 1px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 15px;
+                                background-color: #f4f4f4;
+                            }
+                            .details h3 {
+                                margin: 0 0 10px 0;
+                                font-size: 18px;
+                                color: #555555;
+                            }
+                            .details p {
+                                margin: 5px 0;
+                                font-size: 16px;
+                            }
+                            .total {
+                                text-align: center;
+                                margin-top: 20px;
+                                font-size: 18px;
+                                font-weight: bold;
+                                color: #2c3e50;
+                            }
+                            .footer {
+                                text-align: center;
+                                margin-top: 30px;
+                                font-size: 14px;
+                                color: #777777;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h2>Thank You for Booking with Us!</h2>
+                            <div class="info">
+                                <p>Dear Guest,</p>
+                                <p>We are excited to confirm your booking. Below are the details of your reservation:</p>
+                            </div>
+                            <div class="details">
+                                <h3>Booking Details</h3>
+                                <p><strong>Room Code:</strong> ${roomData}</p>
+                                <p><strong>Extra Services:</strong> ${extraService || "None"}</p>
+                            </div>
+                            <div class="total">
+                                <p>Total Amount: <strong>$${totalBill}</strong></p>
+                            </div>
+                            <div class="footer">
+                                <p>If you have any questions or need to make changes to your booking, feel free to contact us.</p>
+                                <p>We look forward to hosting you!</p>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+                `,
+            });
+            return info;
+        } catch (error) {
+            console.error(`Error sending email: ${error.message}`);
+            return { success: false, error: error.message };
+        }
+    }
+    
 }
 
 module.exports=new Mailer;

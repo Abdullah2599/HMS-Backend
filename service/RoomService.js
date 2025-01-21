@@ -41,5 +41,19 @@ class RoomService {
             return res.status(400).json({ message: `error : ${error}` });
         }
     }
+
+    async RoomRecords(req, res) {
+        try {
+            const room_code=req.params.code;
+            const data = await Room.findOne({roomCode:room_code});
+            if(!data){
+                return res.status(400).json({ message: `error : Room Not Found` });
+            }
+            return res.status(200).json({ message: `Room Record`, roomdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
 }
 module.exports = new RoomService
