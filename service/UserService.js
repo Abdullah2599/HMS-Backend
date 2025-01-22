@@ -130,7 +130,8 @@ class UserService {
             const payload = {
                 id: userdata._id,
                 name: userdata.name,
-                email: userdata.email
+                email: userdata.email,
+                rolename:userdata.role.role_name
             }
             const token = jwt.sign(payload, key, { expiresIn: "2hr" });
             res.status(200).json({ message: "token create", token: token })
@@ -156,6 +157,56 @@ class UserService {
         }
         catch (err) {
             return res.status(400).json({ message: `error : ${err}` });
+        }
+    }
+    async editprofile(req, res) {
+        try {
+            const id = req.user.id;
+            const data = (({ username, contact, address }) => ({ username , contact , address }))(req.body)
+            const update = await user.findByIdAndUpdate(id,data);
+
+            return res.status(200).json({ message: "user successfully",  data: update });
+        } catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
+    async editpassword(req, res) {
+        try {
+            const data = (({ password, newpassword , renewpassword }) => ({ password, newpassword , renewpassword }))(req.body)
+            const email = req.user.email;
+            const filteremail= await user.findOne({email:email});
+            console.log(filteremail)
+            const isPasswordValid = await bcrypt.compare(data.password,filteremail.password);
+            console.log(isPasswordValid)
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: "Invalid password" });
+            }
+            if(data.newpassword != data.renewpassword){
+                return res.status(400).json({ message: "password does'nt match" });
+            }
+           
+            const hashedPassword = await bcrypt.hash(data.newpassword, 10);
+            const body = {
+                password:hashedPassword
+            }
+            const update = await user.findByIdAndUpdate(filteremail._id,body)
+            return res.status(200).json({ message: "password change successfully", data: body });
+        } catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
+
+    async removedata(req, res) {
+        try {
+            const id = req.params.id;
+            const userdata = await user.findOne({_id:id}).populate("role");
+            if(userdata.role.role_name == "Guest"){
+                return res.status(400).json({ message: `error : guest data can not be deleted` });
+            }
+            const deletedata=await user.findByIdAndDelete(id);
+            return res.status(200).json({ message: "deleted successfully", data: deletedata });
+        } catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
         }
     }
    

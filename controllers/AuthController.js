@@ -19,5 +19,14 @@ class AuthController{
     async userStatus(req,res){
         await UserService.userStatus(req,res);
     }
+    async removedata(req,res){
+        await UserService.removedata(req,res);
+    }
+    async editpassword(req,res){
+        await UserService.editpassword(req,res);
+    }
+    async editprofile(req,res){
+        await UserService.editprofile(req,res);
+    }
 }
 module.exports=new AuthController;

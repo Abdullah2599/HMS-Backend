@@ -19,9 +19,8 @@ class UserRequest {
       .trim().escape(),
   
     body('contact')
-      .isString().withMessage("Contact must be a string")
-      .matches(/^((\+92)|0)?3\d{2}-\d{7}$/).withMessage("Contact must be a valid Pakistani number (e.g., +92300-1234567 or 0300-1234567)"),
-  
+      .isString().withMessage("Contact must be a string"),
+      
       body('email')
         .isEmail().withMessage('Email must be a valid email address')
         .custom(async (value, { req }) => {
