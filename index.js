@@ -9,10 +9,14 @@ const FacilityRouter = require("./routes/FacilityRoute");
 const AdditionalServiceRouter = require("./routes/AdditionalServiceRoute");
 const authMiddleware = require("./middleware/authMiddleware");
 const BookingRouter = require("./routes/BookingRoute");
+const multer = require("multer");
+const path = require("path");
 const app = express();
 app.use(express.json())
 const cors = require('cors');
 app.use(cors());
+
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 DB_hotel()
 app.listen(90,function(){
@@ -28,7 +32,7 @@ app.use("/api/v1/permission",PermissionRouter)
 
 // Auth Based
 
-app.use("/api/v1/room",authMiddleware.verifyaccount,RoomRouter)
+app.use("/api/v1/room",RoomRouter)
 app.use("/api/v1/facility",authMiddleware.verifyaccount,FacilityRouter)
 app.use("/api/v1/a_service",authMiddleware.verifyaccount,AdditionalServiceRouter)
 app.use("/api/v1/booking",authMiddleware.verifyaccount,BookingRouter)
