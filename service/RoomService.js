@@ -43,6 +43,35 @@ class RoomService {
             return res.status(400).json({ message: `error : ${error}` });
         }
     }
+    async listbyfilter(req, res) {
+        try {
+            
+            const bookedRooms = await booking.find({
+                $or: [
+                    { valid_from: { $lte: req.body.valid_to }, valid_to: { $gte: req.body.valid_from } }
+                ]
+            }).select('room');
+
+            const bookedRoomIds = bookedRooms.map(booking => booking.room);
+        
+            const availableRooms = await Room.find({
+                _id: { $nin: bookedRoomIds },
+                person: req.body.person 
+            }).populate({
+                path: "roomfacility",
+                populate: {
+                    path: "facility",
+                    model: "facility"
+                }
+            });
+        
+            return res.status(200).json({ message: `Available rooms`, roomdata: availableRooms });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: `An error occurred`, error });
+        }
+        
+    }
 
     async RoomRecords(req, res) {
         try {

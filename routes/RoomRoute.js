@@ -82,7 +82,7 @@ RoomRouter.post(
 
 // Route for listing rooms
 RoomRouter.get("/list", RoomController.list);
-
+RoomRouter.post("/listbyfilter", RoomController.list);
 // Route for fetching a specific room record
 RoomRouter.get("/record/:code", RoomController.roomRecord);
 

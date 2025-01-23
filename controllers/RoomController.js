@@ -7,6 +7,9 @@ class RoomController{
     async list(req,res){
         await RoomService.list(req,res);
     }
+    async listbyfilter(req,res){
+        await RoomService.listbyfilter(req,res);
+    }
     async roomRecord(req,res){
         await RoomService.RoomRecords(req,res);
     }
