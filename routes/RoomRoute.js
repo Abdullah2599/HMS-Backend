@@ -6,10 +6,8 @@ const path = require("path");
 const fs = require("fs");
 const RoomService = require("../service/RoomService");
 
-
-
 // Ensure the uploads directory exists
-const uploadFolder = path.join(__dirname, "public/uploads");
+const uploadFolder = path.join(__dirname, "../public/uploads"); // Fixed path to ensure it aligns properly
 if (!fs.existsSync(uploadFolder)) {
   fs.mkdirSync(uploadFolder, { recursive: true });
 }
@@ -54,7 +52,7 @@ RoomRouter.post(
       console.log("req.files:", req.files);
       console.log("req.body:", req.body);
 
-      // Decode and save base64 images if necessary
+      // Handle base64 images if provided
       if (req.body.image && req.body.image.startsWith("data:")) {
         const imageName = `${Date.now()}-image.png`;
         req.body.image = saveEncodedImage(req.body.image, uploadFolder, imageName);
@@ -64,8 +62,8 @@ RoomRouter.post(
         const largeImageName = `${Date.now()}-imagelg.png`;
         req.body.imagelg = saveEncodedImage(req.body.imagelg, uploadFolder, largeImageName);
       }
-      console.log("file",req.files?.image)
-      // Handle file uploads if multer works
+
+      // Handle file uploads through Multer
       if (req.files?.image) {
         req.body.image = `/uploads/${req.files.image[0].filename}`;
       }
@@ -76,11 +74,16 @@ RoomRouter.post(
       // Call the RoomService
       await RoomService.create(req, res);
     } catch (err) {
+      console.error("Error creating room:", err);
       res.status(500).json({ message: `Error: ${err.message}` });
     }
   }
 );
 
-RoomRouter.get("/list",RoomController.list)
-RoomRouter.get("/record/:code",RoomController.roomRecord)
-module.exports=RoomRouter;
+// Route for listing rooms
+RoomRouter.get("/list", RoomController.list);
+
+// Route for fetching a specific room record
+RoomRouter.get("/record/:code", RoomController.roomRecord);
+
+module.exports = RoomRouter;
