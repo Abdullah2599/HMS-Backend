@@ -1,3 +1,4 @@
+const booking = require("../models/Booking");
 const RoomFacility = require("../models/joins/RoomFacility");
 const Room = require("../models/Room");
 
