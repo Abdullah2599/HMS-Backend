@@ -56,7 +56,7 @@ class RoomService {
         
             const availableRooms = await Room.find({
                 _id: { $nin: bookedRoomIds },
-                person: req.body.person 
+                person: {$lte:req.body.person} 
             }).populate({
                 path: "roomfacility",
                 populate: {
