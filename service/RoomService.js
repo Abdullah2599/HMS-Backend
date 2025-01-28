@@ -77,7 +77,13 @@ class RoomService {
     async RoomRecords(req, res) {
         try {
             const room_code=req.params.code;
-            const data = await Room.findOne({roomCode:room_code});
+            const data = await Room.findOne({roomCode:room_code}).populate({
+                path: "roomfacility",
+                populate: {
+                    path: "facility",
+                    model: "facility"
+                }
+            });
             if(!data){
                 return res.status(400).json({ message: `error : Room Not Found` });
             }
