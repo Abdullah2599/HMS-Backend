@@ -98,7 +98,7 @@ class UserService {
             }
             const payload = {
                 id: userdata._id,
-                name: userdata.name,
+                name: userdata.username,
                 email: userdata.email,
                 rolename:userdata.role.role_name
             }
@@ -129,7 +129,7 @@ class UserService {
             }
             const payload = {
                 id: userdata._id,
-                name: userdata.name,
+                name: userdata.username,
                 email: userdata.email,
                 rolename:userdata.role.role_name
             }
