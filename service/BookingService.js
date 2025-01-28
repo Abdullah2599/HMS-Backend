@@ -3,6 +3,9 @@ const booking = require("../models/Booking");
 const Room = require("../models/Room");
 const generateCode = require("../thirdparty/codegenerator");
 const additional_booking = require("../models/joins/AdditionalBooking");
+const Stripe = require("stripe");
+const stripe = new Stripe('sk_test_51PgZW0RurkMN3umpSM5JmG2HkvNvaGqYV122LWUrb9W8fhZ8fPqK0bm99MLE5HUsmCW6QfzyVG1hPcTNAFPGVeTJ00jcNbV33f'); // Replace with your actual Stripe secret key
+
 const { bookingEmail } = require("../thirdparty/mailer");
 class BookingService {
     async create(req, res) {
@@ -10,10 +13,15 @@ class BookingService {
             let AdditionalServiceData= [];
             let services = []
             let totalamount=0;
-            const body = (({room,valid_to,valid_from}) => ({room,valid_to,valid_from}))(req.body);
+            const body = (({ room, valid_to, valid_from }) => ({ room, valid_to, valid_from }))(req.body);
+            const fromDate = new Date(body.valid_from); 
+            const toDate = new Date(body.valid_to); 
+            const days = (Math.ceil((toDate-fromDate) / (1000 * 60 * 60 * 24)))+1; 
+            console.log(days);
+            
             body.booking_code=generateCode();
             body.guest=req.user.id;
-            const service = req.body.service;
+            const service = Array.isArray(req.body.service) ? req.body.service : [];
             const bookingdata = await booking.findOne({ booking_code: body.booking_code });
             const roomdata= await Room.findOne({_id:body.room});
             const datefilter= await booking.findOne({
@@ -43,11 +51,41 @@ class BookingService {
                     AdditionalServiceData.push(record);
                 }
             }
-            body.totalBill = totalamount + roomdata.price;
+            body.totalBill = (totalamount + roomdata.price)*days;
             const addservice= await additional_booking.insertMany(AdditionalServiceData);
-            const update= await booking.findByIdAndUpdate(data.id,body);
-            bookingEmail(req.user.email,roomdata.roomCode,services,body.totalBill);
-            return res.status(200).json({ message: `Booking Registered`, Bookingdata: update ,AdditionalService:addservice});
+           
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [
+                  {
+                    price_data: {
+                      currency: 'usd',
+                      product_data: {
+                        name: roomdata.roomTitle,
+                      },
+                      unit_amount: body.totalBill * 100, 
+                    },
+                    quantity: 1,
+                  },
+                ],
+                mode: 'payment',
+                success_url: 'http://localhost:3000/success', 
+                cancel_url: 'http://localhost:3000/cancel', 
+                metadata: {
+                  bookingId: data.id.toString(),
+                },
+              });
+
+              if(session){
+                body.paymentstatus="paid";
+                const update= await booking.findByIdAndUpdate(data.id,body);
+                bookingEmail(req.user.email,roomdata.roomCode,services,body.totalBill);
+                return res.status(200).json({ message: `Booking Registered`,totalbill:body.totalBill, Bookingdata: update ,AdditionalService:addservice});
+              }
+              else{
+                await booking.findByIdAndDelete(data.id);
+                return res.status(400).json({ message: `Error: Stripe session creation failed.` });
+              }
 
         } catch (error) {
             return res.status(400).json({ message: `error : ${error}` });
@@ -91,6 +129,25 @@ class BookingService {
                 return res.status(400).json({ message: `error : Booking Not Found` });
             }
             return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
+    async datefilter(req, res) {
+        try {
+            const body = (({room,valid_to,valid_from}) => ({room,valid_to,valid_from}))(req.body);
+            const roomdata= await Room.findOne({_id:body.room});
+            const datefilter= await booking.findOne({
+                room:body.room,
+                $or:[
+                    { valid_from: { $lte: body.valid_to }, valid_to: { $gte: body.valid_from } }
+                ]
+            });
+            if(datefilter){
+                return res.status(400).json({ message: `error : room already booked` }); 
+            }
+            return res.status(200).json({ message: `room available` });
         }
         catch (error) {
             return res.status(400).json({ message: `error : ${error}` });

@@ -13,7 +13,6 @@ class RoomService {
             return res.status(400).json({ message: "Error: Room Code Already Exists" });
           }
       
-          // Create the room with image paths
           const roomData = await Room.create({ roomCode, roomTitle, description, roomType, size, person, price, image, imagelg });
       
           // Handle facilities

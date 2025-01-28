@@ -7,6 +7,11 @@ const BookingSchema= new Schema({
     guest:({type:Schema.Types.ObjectId,ref:"user"}),
     valid_from:({type:Date,require:true}),
     valid_to:({type:Date,require:true}),
+    paymentstatus: { 
+        type: String, 
+        default: "pending", 
+        enum: ["pending", "paid"] // Restrict values to "pending" or "paid"
+    },
     totalBill:({type:Number,require:true})
    
 })

@@ -166,7 +166,7 @@ class Mailer{
                                 <p><strong>Extra Services:</strong> ${extraService || "None"}</p>
                             </div>
                             <div class="total">
-                                <p>Total Amount: <strong>$${totalBill}</strong></p>
+                                <p>Total Amount: <strong>${totalBill} Pkr</strong></p>
                             </div>
                             <div class="footer">
                                 <p>If you have any questions or need to make changes to your booking, feel free to contact us.</p>
