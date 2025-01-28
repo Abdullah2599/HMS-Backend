@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Helper function to decode and save base64 images
+
 const saveEncodedImage = (base64String, folderPath, fileName) => {
   const matches = base64String.match(/^data:(.+);base64,(.+)$/);
   if (!matches || matches.length !== 3) {
@@ -34,16 +34,16 @@ const saveEncodedImage = (base64String, folderPath, fileName) => {
   const imageBuffer = Buffer.from(matches[2], "base64");
   const fullPath = path.join(folderPath, fileName);
 
-  // Ensure the folder exists
+
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
   }
 
   fs.writeFileSync(fullPath, imageBuffer);
-  return `/uploads/${fileName}`; // Return the relative file path
+  return `/uploads/${fileName}`; 
 };
 
-// Route for creating a room
+
 RoomRouter.post(
   "/create",
   upload.fields([{ name: "image" }, { name: "imagelg" }]),
@@ -52,7 +52,7 @@ RoomRouter.post(
       console.log("req.files:", req.files);
       console.log("req.body:", req.body);
 
-      // Handle base64 images if provided
+
       if (req.body.image && req.body.image.startsWith("data:")) {
         const imageName = `${Date.now()}-image.png`;
         req.body.image = saveEncodedImage(req.body.image, uploadFolder, imageName);
@@ -63,7 +63,7 @@ RoomRouter.post(
         req.body.imagelg = saveEncodedImage(req.body.imagelg, uploadFolder, largeImageName);
       }
 
-      // Handle file uploads through Multer
+
       if (req.files?.image) {
         req.body.image = `/uploads/${req.files.image[0].filename}`;
       }
@@ -82,7 +82,7 @@ RoomRouter.post(
 
 // Route for listing rooms
 RoomRouter.get("/list", RoomController.list);
-RoomRouter.post("/listbyfilter", RoomController.list);
+RoomRouter.post("/listbyfilter", RoomController.listbyfilter);
 // Route for fetching a specific room record
 RoomRouter.get("/record/:code", RoomController.roomRecord);
 
