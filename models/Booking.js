@@ -10,7 +10,7 @@ const BookingSchema= new Schema({
     paymentstatus: { 
         type: String, 
         default: "pending", 
-        enum: ["pending", "paid"] // Restrict values to "pending" or "paid"
+        enum: ["pending", "paid","cancel"] // Restrict values to "pending" or "paid"
     },
     totalBill:({type:Number,require:true})
    

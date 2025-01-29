@@ -6,7 +6,7 @@ const RoomSchema= new Schema({
     roomTitle:({type:String,required:true}),
     description:({type:String}),
     roomType:({type:String,required:true,enum:["doubleBed","singleBed","Luxuary"]}),
-    avaibility:({type:String,enum:["available","disabled","occupied","in_work"],default:"available"}),
+    avaibility:({type:String,enum:["available","disabled","occupied"],default:"available"}),
     size:({type:Number}),
     person:({type:Number,required:true}),
     price:({type:Number, required:true}),

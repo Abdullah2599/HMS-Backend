@@ -16,9 +16,8 @@ class BookingController{
     async datefilter(req,res){
         await BookingService.datefilter(req,res);
     }
-    async delete(req,res){
-    }
-    async update(req,res){
+    async bookingcancel(req,res){
+        await BookingService.bookingcancel(req,res)
     }
 }
 module.exports=new BookingController;

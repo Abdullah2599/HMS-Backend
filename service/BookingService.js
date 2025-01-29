@@ -123,5 +123,20 @@ class BookingService {
             return res.status(400).json({ message: `error : ${error}` });
         }
     }
+    async bookingcancel(req, res) {
+        try {
+            const today = new Date();
+            const id = req.params.id;
+            const data = await booking.findOne({ _id: id,valid_from: { $gte: today },valid_to: { $gte: today } });
+            if (!data) {
+                return res.status(400).json({ message: `error : Booking Not Found in Future` });
+            }
+            const update = await booking.findByIdAndUpdate(id,{paymentstatus:"cancel"})
+            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ message: `error : ${error}` });
+        }
+    }
 }
 module.exports = new BookingService

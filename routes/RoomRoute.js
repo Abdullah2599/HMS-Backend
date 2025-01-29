@@ -80,10 +80,11 @@ RoomRouter.post(
   }
 );
 
-// Route for listing rooms
-RoomRouter.get("/list", RoomController.list);
-RoomRouter.post("/listbyfilter", RoomController.listbyfilter);
-// Route for fetching a specific room record
-RoomRouter.get("/record/:code", RoomController.roomRecord);
 
+RoomRouter.get("/list", RoomController.list);
+RoomRouter.get("/availableroomlist", RoomController.availableRoomslist);
+RoomRouter.post("/listbyfilter", RoomController.listbyfilter);
+RoomRouter.post("/status/:id", RoomController.status);
+RoomRouter.get("/record/:code", RoomController.roomRecord);
+RoomRouter.put("/update/:id", RoomController.update);
 module.exports = RoomRouter;

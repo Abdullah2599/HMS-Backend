@@ -6,4 +6,5 @@ BookingRouter.get("/list",BookingController.list)
 BookingRouter.get("/record/:code",BookingController.bookingRecord)
 BookingRouter.get("/guestbooking",BookingController.bookingRecordofGuest)
 BookingRouter.post("/datefilter",BookingController.datefilter)
+BookingRouter.put("/cancelbooking/:id",BookingController.bookingcancel)
 module.exports=BookingRouter;
