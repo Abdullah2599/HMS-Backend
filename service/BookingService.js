@@ -3,9 +3,6 @@ const booking = require("../models/Booking");
 const Room = require("../models/Room");
 const generateCode = require("../thirdparty/codegenerator");
 const additional_booking = require("../models/joins/AdditionalBooking");
-const Stripe = require("stripe");
-const stripe = new Stripe('sk_test_51PgZW0RurkMN3umpSM5JmG2HkvNvaGqYV122LWUrb9W8fhZ8fPqK0bm99MLE5HUsmCW6QfzyVG1hPcTNAFPGVeTJ00jcNbV33f'); // Replace with your actual Stripe secret key
-
 const { bookingEmail } = require("../thirdparty/mailer");
 class BookingService {
     async create(req, res) {
