@@ -13,7 +13,7 @@ class BookingService {
             const body = (({ room, valid_to, valid_from }) => ({ room, valid_to, valid_from }))(req.body);
             const fromDate = new Date(body.valid_from);
             const toDate = new Date(body.valid_to);
-            const days = (Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24))) + 1;
+            const days = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24));
             console.log(days);
 
             body.booking_code = generateCode();
