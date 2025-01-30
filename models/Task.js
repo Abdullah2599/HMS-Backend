@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 
 const TaskSchema= new Schema({
     maintenance:({type:Schema.Types.ObjectId,ref:"maintenance"}),
-    guest:({type:Schema.Types.ObjectId,ref:"user"}),
+    housekeeper:({type:Schema.Types.ObjectId,ref:"user"}),
     task:({type:String,required:true}),
     deadline:({type:Date,required:true}),
     status:({type:String,enum:["pending","success"],default:"pending"})

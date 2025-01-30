@@ -14,6 +14,7 @@ const path = require("path");
 const app = express();
 app.use(express.json())
 const cors = require('cors');
+const HouseKeepingRouter = require("./routes/HouseKeepingRoute");
 app.use(cors());
 
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
@@ -33,6 +34,7 @@ app.use("/api/v1/permission",PermissionRouter)
 // Auth Based
 
 app.use("/api/v1/room",RoomRouter)
+app.use("/api/v1/housekeeping",HouseKeepingRouter)
 app.use("/api/v1/facility",authMiddleware.verifyaccount,FacilityRouter)
 app.use("/api/v1/a_service",authMiddleware.verifyaccount,AdditionalServiceRouter)
 app.use("/api/v1/booking",authMiddleware.verifyaccount,BookingRouter)
