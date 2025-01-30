@@ -163,7 +163,7 @@ class UserService {
     async editprofile(req, res) {
         try {
             const id = req.user.id;
-            const data = (({ username, contact, address }) => ({ username , contact , address }))(req.body)
+            const data = (({ username, contact, address,status }) => ({ username , contact , address, status }))(req.body)
             const update = await user.findByIdAndUpdate(id,data);
 
             return res.status(200).json({ message: "user successfully",  data: update });
