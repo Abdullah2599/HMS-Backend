@@ -25,7 +25,7 @@ app.listen(90,function(){
 })
 
 // Role Based
-
+// https://rentry.co/2s57mt3u/edit
 app.use("/api/v1/auth",AuthRouter)
 app.use("/api/v1/roles",RolesRouter)
 app.use("/api/v1/permission_list",PermissionListRouter)
