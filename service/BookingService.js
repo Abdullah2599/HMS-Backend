@@ -106,7 +106,8 @@ class BookingService {
     }
     async datefilter(req, res) {
         try {
-            const body = (({ room, valid_to, valid_from }) => ({ room, valid_to, valid_from }))(req.body);
+            const body = (({ room, valid_to, valid_from ,person}) => ({ room, valid_to, valid_from,person }))(req.body);
+          
             const roomdata = await Room.findOne({ _id: body.room });
             const datefilter = await booking.findOne({
                 room: body.room,
@@ -114,6 +115,9 @@ class BookingService {
                     { valid_from: { $lte: body.valid_to }, valid_to: { $gte: body.valid_from } }
                 ]
             });
+            if (roomdata.person < body.person) {
+                return res.status(400).json({ success: false, message: 'Person value is greater than allowed for this room' });
+            }
             if (datefilter) {
                 return res.status(400).json({ message: `error : room already booked` });
             }
