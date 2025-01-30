@@ -100,6 +100,7 @@ class UserService {
                 id: userdata._id,
                 name: userdata.username,
                 email: userdata.email,
+                contact: userdata.contact,
                 rolename:userdata.role.role_name
             }
             const token = jwt.sign(payload, key, { expiresIn: "2hr" });

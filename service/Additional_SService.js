@@ -20,7 +20,7 @@ class Aditional_SService{
     }
     async list(req,res){
         try {
-            const data =await Aditional.find();
+            const data =await AdditionalService.find();
             return res.status(200).json({ message: `Aditional Service data` , data:data});
         } catch (error) {
             return res.status(400).json({ message: `error : ${error}` });
