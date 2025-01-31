@@ -28,5 +28,11 @@ class AuthController{
     async editprofile(req,res){
         await UserService.editprofile(req,res);
     }
+    async list(req,res){
+        await UserService.list(req,res);
+    }
+    async usercreate(req,res){
+        await UserService.usercreate(req,res);
+    }
 }
 module.exports=new AuthController;

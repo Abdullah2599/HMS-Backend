@@ -51,7 +51,7 @@ class BookingService {
             body.totalBill = (totalamount + roomdata.price) * days;
             const addservice = await additional_booking.insertMany(AdditionalServiceData);
 
-            body.paymentstatus = "paid";
+            body.paymentstatus = "pending";
             const update = await booking.findByIdAndUpdate(data.id, body);
             bookingEmail(req.user.email, roomdata.roomCode, services, body.totalBill);
             return res.status(200).json({ message: `Booking Registered`, totalbill: body.totalBill, Bookingdata: update, AdditionalService: addservice });
