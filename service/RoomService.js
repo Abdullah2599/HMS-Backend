@@ -10,7 +10,7 @@ class RoomService {
 
             const roomExists = await Room.findOne({ roomCode });
             if (roomExists) {
-                return res.status(400).json({ message: "Error: Room Code Already Exists" });
+                return res.status(400).json({ msg: "Error: Room Code Already Exists" });
             }
 
             const roomData = await Room.create({ roomCode, roomTitle, description, roomType, size, person, price, image, imagelg });
@@ -25,9 +25,9 @@ class RoomService {
             if (facilityArray.length > 0) {
                 await RoomFacility.insertMany(facilityArray);
             }
-            return res.status(200).json({ message: "Room Registered", roomData, facilities: facilityArray });
+            return res.status(200).json({ msg: "Room Registered", roomData, facilities: facilityArray });
         } catch (error) {
-            return res.status(400).json({ message: `Error: ${error.message}` });
+            return res.status(400).json({ msg: `Error: ${error.msg}` });
         }
     }
 
@@ -61,11 +61,11 @@ class RoomService {
             });
 
             console.log("Final Room Data:", roomData);
-            return res.status(200).json({ message: "Room listing", roomdata: roomData });
+            return res.status(200).json({ msg: "Room listing", roomdata: roomData });
         }
         catch (error) {
             console.error("Error:", error);
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
 
@@ -93,10 +93,10 @@ class RoomService {
                 }
             });
 
-            return res.status(200).json({ message: `Available rooms`, roomdata: availableRooms });
+            return res.status(200).json({ msg: `Available rooms`, roomdata: availableRooms });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: `An error occurred`, error });
+            return res.status(500).json({ msg: `An error occurred`, error });
         }
 
     }
@@ -108,10 +108,10 @@ class RoomService {
                     model: "facility"
                 }
             });
-            return res.status(200).json({ message: `Available Room listing`, roomdata: data });
+            return res.status(200).json({ msg: `Available Room listing`, roomdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
 
@@ -126,12 +126,12 @@ class RoomService {
                 }
             });
             if (!data) {
-                return res.status(400).json({ message: `error : Room Not Found` });
+                return res.status(400).json({ msg: `error : Room Not Found` });
             }
-            return res.status(200).json({ message: `Room Record`, roomdata: data });
+            return res.status(200).json({ msg: `Room Record`, roomdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
     async statusRoom(req, res) {
@@ -141,17 +141,17 @@ class RoomService {
             console.log(data)
             if (data.avaibility == "available") {
                 const update = await Room.findByIdAndUpdate(id, { avaibility: "disabled" })
-                return res.status(200).json({ message: `Room disabled Successfully` });
+                return res.status(200).json({ msg: `Room disabled Successfully` });
             }
             if (data.avaibility == "disabled") {
                 const update = await Room.findByIdAndUpdate(id, { avaibility: "available" })
-                return res.status(200).json({ message: `Room available Successfully` });
+                return res.status(200).json({ msg: `Room available Successfully` });
             }
-            return res.status(200).json({ message: `Room status can not be changed` });
+            return res.status(200).json({ msg: `Room status can not be changed` });
 
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
     async update(req, res) {
@@ -178,9 +178,9 @@ class RoomService {
                 await RoomFacility.insertMany(facilityArray);
             }
 
-            return res.status(200).json({ message: "Room Registered", roomData, facilities: facilityArray });
+            return res.status(200).json({ msg: "Room Registered", roomData, facilities: facilityArray });
         } catch (error) {
-            return res.status(400).json({ message: `Error: ${error.message}` });
+            return res.status(400).json({ msg: `Error: ${error.msg}` });
         }
     }
    

@@ -7,14 +7,14 @@ class RolesService {
 
             const data = await Roles.findOne({role_name:role_object.role_name});
             if (data != null) {
-                res.status(400).json({ message: "role already inserted" });
+                res.status(400).json({ msg: "role already inserted" });
                 return;
             }
             await Roles.insertMany([role_object]);
-            res.status(200).json({ message: "role inserted Successfully" });
+            res.status(200).json({ msg: "role inserted Successfully" });
         }
         catch (err) {
-            res.status(400).json({ message: `error: ${err}` });
+            res.status(400).json({ msg: `error: ${err}` });
         }
     }
     async list(req, res) {
@@ -23,20 +23,20 @@ class RolesService {
                 path:"permission_list",
                 model:"permission_list"
             }});
-            res.status(200).json({ message: "Roles List", data:data });
+            res.status(200).json({ msg: "Roles List", data:data });
         }
         catch (err) {
-            res.status(400).json({ message: `error: ${err}` });
+            res.status(400).json({ msg: `error: ${err}` });
         }
     }
     async delete(req, res) {
         try {
             const id = req.params.id;
             const data=await Roles.findByIdAndDelete(id);
-            res.status(200).json({ message: "Record Deleted Successfully", data:data });
+            res.status(200).json({ msg: "Record Deleted Successfully", data:data });
         }
         catch (err) {
-            res.status(400).json({ message: `error: ${err}` });
+            res.status(400).json({ msg: `error: ${err}` });
         }
     }
 }

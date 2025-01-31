@@ -9,12 +9,7 @@ class BookingService {
         try {
             let AdditionalServiceData = [];
             let services = []
-            let totalamount = 0;
-            const body = (({ room, valid_to, valid_from }) => ({ room, valid_to, valid_from }))(req.body);
-            const fromDate = new Date(body.valid_from);
-            const toDate = new Date(body.valid_to);
-            const days = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24));
-            console.log(days);
+            const body = (({ room, valid_to, valid_from, totalBill }) => ({ room, valid_to, valid_from, totalBill }))(req.body);
 
             body.booking_code = generateCode();
             body.guest = req.user.id;
@@ -28,13 +23,13 @@ class BookingService {
                 ]
             });
             if (datefilter) {
-                return res.status(400).json({ message: `error : room already booked` });
+                return res.status(400).json({ msg: `error : room already booked` });
             }
             if (!roomdata) {
-                return res.status(400).json({ message: `error : room not exist in booking` });
+                return res.status(400).json({ msg: `error : room not exist in booking` });
             }
             if (bookingdata) {
-                return res.status(400).json({ message: `error : again booking please because room code already exist` });
+                return res.status(400).json({ msg: `error : again booking please because room code already exist` });
             }
             const data = await booking.create(body);
             console.log(data);
@@ -44,21 +39,19 @@ class BookingService {
                 console.log(serviceData)
                 if (serviceData) {
                     services.push(serviceData)
-                    totalamount += serviceData.price;
                     AdditionalServiceData.push(record);
                 }
             }
-            body.totalBill = (totalamount + roomdata.price) * days;
             const addservice = await additional_booking.insertMany(AdditionalServiceData);
 
             body.paymentstatus = "pending";
             const update = await booking.findByIdAndUpdate(data.id, body);
             bookingEmail(req.user.email, roomdata.roomCode, services, body.totalBill);
-            return res.status(200).json({ message: `Booking Registered`, totalbill: body.totalBill, Bookingdata: update, AdditionalService: addservice });
+            return res.status(200).json({ msg: `Booking Registered`, totalbill: body.totalBill, Bookingdata: update, AdditionalService: addservice });
 
 
         } catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
     async list(req, res) {
@@ -70,10 +63,10 @@ class BookingService {
                 }
             });
 
-            return res.status(200).json({ message: `Booking listing`, Bookingdata: data });
+            return res.status(200).json({ msg: `Booking listing`, Bookingdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
 
@@ -82,12 +75,12 @@ class BookingService {
             const user = req.user.id;
             const data = await booking.find({ guest: user });
             if (!data) {
-                return res.status(400).json({ message: `error : Booking Not Found` });
+                return res.status(400).json({ msg: `error : Booking Not Found` });
             }
-            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+            return res.status(200).json({ msg: `Booking record`, Bookingdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
 
@@ -96,12 +89,12 @@ class BookingService {
             const booking_code = req.params.code;
             const data = await booking.findOne({ booking_code: booking_code });
             if (!data) {
-                return res.status(400).json({ message: `error : Booking Not Found` });
+                return res.status(400).json({ msg: `error : Booking Not Found` });
             }
-            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+            return res.status(200).json({ msg: `Booking record`, Bookingdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
     async datefilter(req, res) {
@@ -116,15 +109,15 @@ class BookingService {
                 ]
             });
             if (roomdata.person < body.person) {
-                return res.status(400).json({ success: false, message: 'Person value is greater than allowed for this room' });
+                return res.status(400).json({ success: false, msg: 'Person value is greater than allowed for this room' });
             }
             if (datefilter) {
-                return res.status(400).json({ message: `error : room already booked` });
+                return res.status(400).json({ msg: `error : room already booked` });
             }
-            return res.status(200).json({ message: `room available` });
+            return res.status(200).json({ msg: `room available` });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
     async bookingcancel(req, res) {
@@ -133,13 +126,13 @@ class BookingService {
             const id = req.params.id;
             const data = await booking.findOne({ _id: id,valid_from: { $gte: today },valid_to: { $gte: today } });
             if (!data) {
-                return res.status(400).json({ message: `error : Booking Not Found in Future` });
+                return res.status(400).json({ msg: `error : Booking Not Found in Future` });
             }
             const update = await booking.findByIdAndUpdate(id,{paymentstatus:"cancel"})
-            return res.status(200).json({ message: `Booking record`, Bookingdata: data });
+            return res.status(200).json({ msg: `Booking record`, Bookingdata: data });
         }
         catch (error) {
-            return res.status(400).json({ message: `error : ${error}` });
+            return res.status(400).json({ msg: `error : ${error}` });
         }
     }
 }
