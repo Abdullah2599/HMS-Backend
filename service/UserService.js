@@ -235,6 +235,8 @@ class UserService {
             const filter = await user.findOne({email:data.email})
             if (filter) return res.status(400).json({ msg: "email already exist" });
             data.role=role_id._id;
+            const hashedPassword = await bcrypt.hash(data.password, 10);
+            data.password = hashedPassword;
             const register = await user.insertMany([data]);
 
             return res.status(200).json({ msg: "guest registered successfully", data: register });
