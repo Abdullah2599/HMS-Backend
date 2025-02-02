@@ -5,7 +5,7 @@ const RoomSchema= new Schema({
     roomCode:({type:String,required:true,unique:true}),
     roomTitle:({type:String,required:true}),
     description:({type:String}),
-    roomType:({type:String,required:true,enum:["doubleBed","singleBed","Luxuary"]}),
+    roomType:({type:String,required:true,enum:["doubleBed","singleBed","Luxury"]}),
     avaibility:({type:String,enum:["available","disabled","occupied"],default:"available"}),
     size:({type:Number}),
     person:({type:Number,required:true}),

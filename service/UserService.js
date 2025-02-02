@@ -162,7 +162,11 @@ class UserService {
     }
     async editprofile(req, res) {
         try {
-            const id = req.user.id;
+            const id = req.params.id;
+            const userrecord=await user.findOne({_id:id});
+            if(!userrecord){
+                return res.status(400).json({ msg: `error : Edit Id not found` });
+            }
             const data = (({ username, contact, address, status }) => ({ username, contact, address, status }))(req.body)
             const update = await user.findByIdAndUpdate(id, data);
 

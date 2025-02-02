@@ -16,6 +16,6 @@ AuthRouter.post("/userstatus/:id",authMiddleware.verifyaccount,AuthController.us
 AuthRouter.get("/checkstatus/:id",authMiddleware.verifyaccount,AuthController.checkstatus)
 AuthRouter.post("/admin/login",AuthController.SuperAdminlogin)
 AuthRouter.delete("/removedata/:id",authMiddleware.verifyaccount,AuthController.removedata)
-AuthRouter.put("/editprofile",EditUserRequest.validationRules(),UserRequest.validate,authMiddleware.verifyaccount,AuthController.editprofile)
+AuthRouter.put("/editprofile/:id",EditUserRequest.validationRules(),UserRequest.validate,authMiddleware.verifyaccount,AuthController.editprofile)
 AuthRouter.put("/editpassword",EditUserRequest.validationRules(),UserRequest.validate,authMiddleware.verifyaccount,AuthController.editpassword)
 module.exports=AuthRouter;
