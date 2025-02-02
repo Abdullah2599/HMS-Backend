@@ -34,5 +34,8 @@ class AuthController{
     async usercreate(req,res){
         await UserService.usercreate(req,res);
     }
+    async checkstatus(req,res){
+        await UserService.checkStatus(req,res);
+    }
 }
 module.exports=new AuthController;

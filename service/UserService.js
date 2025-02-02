@@ -245,6 +245,20 @@ class UserService {
         }
     }
 
+    async checkStatus(req, res) {
+        try {
+            const user_id = req.params.id;
+            const user_data = await user.findOne({ _id: user_id });
+            if ( user_data.status == "InActive") {
+                return res.status(400).json({ msg: `error : User Inactive` });
+            }
+            res.status(200).json({ msg: `User active` })
+        }
+        catch (err) {
+            return res.status(400).json({ msg: `error : ${err}` });
+        }
+    }
+
 }
 
 module.exports = new UserService;
