@@ -9,7 +9,6 @@ const FacilityRouter = require("./routes/FacilityRoute");
 const AdditionalServiceRouter = require("./routes/AdditionalServiceRoute");
 const authMiddleware = require("./middleware/authMiddleware");
 const BookingRouter = require("./routes/BookingRoute");
-const multer = require("multer");
 const path = require("path");
 const app = express();
 app.use(express.json())

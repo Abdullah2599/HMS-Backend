@@ -7,29 +7,33 @@ class RoomService {
         try {
             let facilityArray = [];
             const { roomCode, roomTitle, description, roomType, size, person, price, image, imagelg } = req.body;
-
+    
             const roomExists = await Room.findOne({ roomCode });
             if (roomExists) {
                 return res.status(400).json({ msg: "Error: Room Code Already Exists" });
             }
-
+    
             const roomData = await Room.create({ roomCode, roomTitle, description, roomType, size, person, price, image, imagelg });
-
-
-            let facility = req.body.facility || [];
-
-            let uniqueFacilities = [...new Set(facility.map(item => item.facility))];
-
+    
+            // Manually parse the facility string if it's present
+            let facility = req.body.facility ? JSON.parse(req.body.facility) : [];
+    
+            // Ensure unique facilities
+            let uniqueFacilities = [...new Set(facility.map(item => item))];
+    
             facilityArray = uniqueFacilities.map(facilityId => ({ facility: facilityId, room: roomData.id }));
-
+    
             if (facilityArray.length > 0) {
                 await RoomFacility.insertMany(facilityArray);
             }
+    
             return res.status(200).json({ msg: "Room Registered", roomData, facilities: facilityArray });
         } catch (error) {
             return res.status(400).json({ msg: `Error: ${error.msg}` });
         }
     }
+    
+    
 
     async list(req, res) {
         try {
