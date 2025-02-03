@@ -86,5 +86,6 @@ RoomRouter.get("/availableroomlist", RoomController.availableRoomslist);
 RoomRouter.post("/listbyfilter", RoomController.listbyfilter);
 RoomRouter.post("/status/:id", RoomController.status);
 RoomRouter.get("/record/:code", RoomController.roomRecord);
+RoomRouter.get("/recordbyid/:id", RoomController.RoomRecordsbyid);
 RoomRouter.put("/update/:id", RoomController.update);
 module.exports = RoomRouter;

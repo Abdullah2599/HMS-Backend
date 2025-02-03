@@ -13,7 +13,11 @@ class BookingService {
 
             body.booking_code = generateCode();
             body.guest = req.user.id;
-            const service = Array.isArray(req.body.service) ? req.body.service : [];
+            console.log(req.body); // Log the entire request body to inspect
+            const service = req.body.service && Array.isArray(req.body.service) ? req.body.service : [];
+            console.log(service); // Log the value of service after the check
+
+
             const bookingdata = await booking.findOne({ booking_code: body.booking_code });
             const roomdata = await Room.findOne({ _id: body.room });
             const datefilter = await booking.findOne({
@@ -70,6 +74,23 @@ class BookingService {
         }
     }
 
+    async listbyroom(req, res) {
+        try {
+            const id = req.body.room
+            const data = await booking.find({ room: id }).populate({
+                path: "service", populate: {
+                    path: "service",
+                    model: "additionalservice"
+                }
+            }).populate("guest");
+
+            return res.status(200).json({ msg: `Booking listing`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ msg: `error : ${error}` });
+        }
+    }
+
     async bookingRecordofGuest(req, res) {
         try {
             const user = req.user.id;
@@ -99,8 +120,8 @@ class BookingService {
     }
     async datefilter(req, res) {
         try {
-            const body = (({ room, valid_to, valid_from ,person}) => ({ room, valid_to, valid_from,person }))(req.body);
-          
+            const body = (({ room, valid_to, valid_from, person }) => ({ room, valid_to, valid_from, person }))(req.body);
+
             const roomdata = await Room.findOne({ _id: body.room });
             const datefilter = await booking.findOne({
                 room: body.room,
@@ -124,11 +145,11 @@ class BookingService {
         try {
             const today = new Date();
             const id = req.params.id;
-            const data = await booking.findOne({ _id: id,valid_from: { $gte: today },valid_to: { $gte: today } });
+            const data = await booking.findOne({ _id: id, valid_from: { $gte: today }, valid_to: { $gte: today } });
             if (!data) {
                 return res.status(400).json({ msg: `error : Booking Not Found in Future` });
             }
-            const update = await booking.findByIdAndUpdate(id,{paymentstatus:"cancel"})
+            const update = await booking.findByIdAndUpdate(id, { paymentstatus: "cancel" })
             return res.status(200).json({ msg: `Booking record`, Bookingdata: data });
         }
         catch (error) {

@@ -14,7 +14,7 @@ async function FindRoles(role) {
 
 async function generateRole() {
   try {
-    let roles = ["Guest", "HouseKeeping", "manager", "receptionist"];
+    let roles = ["Guest", "housekeeping", "manager", "receptionist"];
     const existingRoles = [];
     for (const role of roles) {
       const exists = await FindRoles(role);

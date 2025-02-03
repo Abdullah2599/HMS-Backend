@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 const RolesSchema= new Schema({
-    role_name:({type:String,required:true,enum:["Guest","SuperAdmin","HouseKeeping","manager","receptionist"]}),
+    role_name:({type:String,required:true,enum:["Guest","SuperAdmin","housekeeping","manager","receptionist"]}),
 });
 RolesSchema.virtual("permissions",{
     localField:"_id",

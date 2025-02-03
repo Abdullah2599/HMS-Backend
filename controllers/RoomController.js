@@ -16,6 +16,9 @@ class RoomController{
     async roomRecord(req,res){
         await RoomService.RoomRecords(req,res);
     }
+    async RoomRecordsbyid(req,res){
+        await RoomService.RoomRecordsbyid(req,res);
+    }
     async status(req,res){
         await RoomService.statusRoom(req,res);
     }

@@ -221,7 +221,7 @@ class UserService {
             if (!filter) {
                 return res.status(400).json({ msg: `Invalid Role` });
             }
-            const userList = await user.find({ role: filter._id })
+            const userList = await user.find({ role: filter._id }).populate("role")
             return res.status(200).json({ msg: "User List", data: userList });
         } catch (error) {
             return res.status(400).json({ msg: `error : ${error}` });
@@ -235,6 +235,7 @@ class UserService {
             const role_id = await Roles.findOne({
                 role_name: role
             });
+            console.log(role)
             if (!role_id) return res.status(400).json({ msg: "Invalid role provided" });
             const filter = await user.findOne({email:data.email})
             if (filter) return res.status(400).json({ msg: "email already exist" });

@@ -183,33 +183,56 @@ class RoomService {
     
     async update(req, res) {
         try {
-
-            const id = req.params.id
+            const id = req.params.id;
             let facilityArray = [];
-            const { description, roomType, size, person, price, image, imagelg } = req.body;
-
-            console.log(bookedRooms)
-            const roomData = await Room.findByIdAndUpdate(id, { description, roomType, size, person, price, image, imagelg });
-
-            let facility = req.body.facility || [];
-            let uniqueFacilities = [...new Set(facility.map(item => item.facility))];
-
-            for (let facilityId of uniqueFacilities) {
-                const exists = await RoomFacility.findOne({ facility: facilityId, room: roomData.id });
-
-                if (!exists) {
-                    facilityArray.push({ facility: facilityId, room: roomData.id });
-                }
+            const { description, roomType, size, person, price, roomTitle, facility } = req.body;
+            const roomData = await Room.findById(id);
+    
+            if (!roomData) {
+                return res.status(400).json({ msg: "Room not found" });
             }
+            roomData.description = description || roomData.description;
+            roomData.roomType = roomType || roomData.roomType;
+            roomData.size = size || roomData.size;
+            roomData.person = person || roomData.person;
+            roomData.price = price || roomData.price;
+            roomData.roomTitle = roomTitle || roomData.roomTitle;
+    
+            await roomData.save();
+            let newFacilities = facility ? JSON.parse(facility) : [];
+            let uniqueFacilities = [...new Set(newFacilities)];
+            await RoomFacility.deleteMany({ room: roomData.id });
+            facilityArray = uniqueFacilities.map(facilityId => ({ facility: facilityId, room: roomData.id }));
+    
             if (facilityArray.length > 0) {
                 await RoomFacility.insertMany(facilityArray);
             }
-
-            return res.status(200).json({ msg: "Room Registered", roomData, facilities: facilityArray });
+    
+            return res.status(200).json({ msg: "Room updated successfully", roomData, facilities: facilityArray });
+    
         } catch (error) {
-            return res.status(400).json({ msg: `Error: ${error.msg}` });
+            return res.status(400).json({ msg: `Error: ${error.message}` });
         }
     }
-   
+    
+    async RoomRecordsbyid(req, res) {
+        try {
+            const id = req.params.id;
+            const data = await Room.findOne({ _id: id }).populate({
+                path: "roomfacility",
+                populate: {
+                    path: "facility",
+                    model: "facility"
+                }
+            });
+            if (!data) {
+                return res.status(400).json({ msg: `error : Room Not Found` });
+            }
+            return res.status(200).json({ msg: `Room Record`, roomdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ msg: `error : ${error}` });
+        }
+    }
 }
 module.exports = new RoomService

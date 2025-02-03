@@ -7,6 +7,9 @@ class BookingController{
     async list(req,res){
         await BookingService.list(req,res);
     }
+    async listbyroom(req,res){
+        await BookingService.listbyroom(req,res);
+    }
     async bookingRecord(req,res){
         await BookingService.bookingRecord(req,res);
     }
