@@ -60,7 +60,7 @@ class RoomService {
                 const isBooked = bookedRoomIds.includes(room._id.toString());
                 return {
                     ...room.toObject(),
-                    avaibility: isBooked ? "occupied" : "available"
+                    avaibility: isBooked ? "occupied" : room.avaibility
                 };
             });
 
@@ -141,23 +141,46 @@ class RoomService {
     async statusRoom(req, res) {
         try {
             const id = req.params.id;
+            const today = new Date();
+    
+            // Fetch the room data
             const data = await Room.findOne({ _id: id });
-            console.log(data)
-            if (data.avaibility == "available") {
-                const update = await Room.findByIdAndUpdate(id, { avaibility: "disabled" })
-                return res.status(200).json({ msg: `Room disabled Successfully` });
+            console.log(data);
+    
+            // Check for active bookings for the room
+            const bookedRooms = await booking.find({
+                room: id,
+                valid_from: { $lte: today },
+                valid_to: { $gte: today }
+            }).select("room");
+    
+            // If there are active bookings, the room should be available
+            if (bookedRooms.length > 0) {
+                if (data.avaibility === "disabled") {
+                    // If the room is disabled, automatically enable it
+                    await Room.findByIdAndUpdate(id, { avaibility: "available" });
+                    return res.status(200).json({ msg: "Room is now available due to active booking." });
+                }
+                return res.status(200).json({ msg: "Room is already available due to an active booking." });
             }
-            if (data.avaibility == "disabled") {
-                const update = await Room.findByIdAndUpdate(id, { avaibility: "available" })
-                return res.status(200).json({ msg: `Room available Successfully` });
+    
+            // If no active booking, handle changing the room status manually
+            if (data.avaibility === "available") {
+                const update = await Room.findByIdAndUpdate(id, { avaibility: "disabled" });
+                return res.status(200).json({ msg: "Room disabled successfully." });
             }
-            return res.status(200).json({ msg: `Room status can not be changed` });
-
-        }
-        catch (error) {
-            return res.status(400).json({ msg: `error : ${error}` });
+    
+            if (data.avaibility === "disabled") {
+                const update = await Room.findByIdAndUpdate(id, { avaibility: "available" });
+                return res.status(200).json({ msg: "Room available successfully." });
+            }
+    
+            return res.status(200).json({ msg: "Room status cannot be changed." });
+        } catch (error) {
+            return res.status(400).json({ msg: `Error: ${error.message}` });
         }
     }
+    
     async update(req, res) {
         try {
 
