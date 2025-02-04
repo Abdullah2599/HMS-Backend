@@ -119,8 +119,8 @@ class UserService {
                 res.status(404).json({ msg: "No Record Found" });
                 return;
             }
-            if (userdata.role.role_name != "SuperAdmin") {
-                res.status(404).json({ msg: "Super Admin Not found" });
+            if (userdata.role.role_name == "Guest") {
+                res.status(404).json({ msg: "Staff Not found" });
                 return;
             }
             const isPasswordValid = await bcrypt.compare(data.password, userdata.password);

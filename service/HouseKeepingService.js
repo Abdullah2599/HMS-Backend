@@ -55,5 +55,19 @@ class HouseKeepingService{
             return res.status(400).json({ msg: `error : ${error}` });
         }
     }
+    async tasklist(req,res){
+        try {
+            const id = req.params.id;
+            const data = await Task.findOne({housekeeper:id}).populate("room").populate("housekeeper").populate("maintenance");
+            if(!data){
+                return res.status(400).json({ msg: `record not found`});
+            }
+            return res.status(200).json({ msg: `task list`,data:data });
+
+
+        } catch (error) {
+            return res.status(400).json({ msg: `error : ${error}` });
+        }
+    }
 }
 module.exports=new HouseKeepingService

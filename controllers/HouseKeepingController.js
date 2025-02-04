@@ -10,5 +10,8 @@ class HouseKeepingController{
     async taskassign(req,res){
         await HouseKeepingService.taskAssign(req,res)
     }
+    async tasklist(req,res){
+        await HouseKeepingService.tasklist(req,res)
+    }
 }
 module.exports=new HouseKeepingController
