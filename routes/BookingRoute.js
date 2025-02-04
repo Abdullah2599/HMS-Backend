@@ -2,6 +2,7 @@ const express = require("express");
 const BookingController = require("../controllers/BookingController");
 const BookingRouter = express.Router();
 BookingRouter.post("/create",BookingController.create)
+BookingRouter.post("/createbydashboard",BookingController.createbydashboard)
 BookingRouter.get("/list",BookingController.list)
 BookingRouter.post("/listbyroom",BookingController.listbyroom)
 BookingRouter.get("/record/:code",BookingController.bookingRecord)

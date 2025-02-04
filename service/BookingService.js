@@ -4,6 +4,7 @@ const Room = require("../models/Room");
 const generateCode = require("../thirdparty/codegenerator");
 const additional_booking = require("../models/joins/AdditionalBooking");
 const { bookingEmail } = require("../thirdparty/mailer");
+const user = require("../models/User");
 class BookingService {
     async create(req, res) {
         try {
@@ -60,6 +61,24 @@ class BookingService {
     }
     async list(req, res) {
         try {
+            const data = await booking.find().populate({
+                path: "service", populate: {
+                    path: "service",
+                    model: "additionalservice"
+                }
+            });
+
+            return res.status(200).json({ msg: `Booking listing`, Bookingdata: data });
+        }
+        catch (error) {
+            return res.status(400).json({ msg: `error : ${error}` });
+        }
+    }
+
+    async bookingstatus(req, res) {
+        try {
+            const id = req.params.id;
+            const paymentstatus = req.body.paymentstatus;
             const data = await booking.find().populate({
                 path: "service", populate: {
                     path: "service",
@@ -153,6 +172,61 @@ class BookingService {
             return res.status(200).json({ msg: `Booking record`, Bookingdata: data });
         }
         catch (error) {
+            return res.status(400).json({ msg: `error : ${error}` });
+        }
+    }
+    async createbydashboard(req, res) {
+        try {
+            let AdditionalServiceData = [];
+            let services = []
+            const body = (({ room, valid_to, valid_from, totalBill ,guest }) => ({ room, valid_to, valid_from, totalBill,guest }))(req.body);
+            body.paymentstatus="paid";
+            body.booking_code = generateCode();
+            console.log(req.body); // Log the entire request body to inspect
+            const service = req.body.service && Array.isArray(req.body.service) ? req.body.service : [];
+            console.log(service); // Log the value of service after the check
+
+            const userfilter = await user.findOne({_id:body.guest});
+            if(!userfilter){
+                return res.status(400).json({ msg: `user not found` });
+            }
+            const bookingdata = await booking.findOne({ booking_code: body.booking_code });
+            const roomdata = await Room.findOne({ _id: body.room });
+            const datefilter = await booking.findOne({
+                room: body.room,
+                $or: [
+                    { valid_from: { $lte: body.valid_to }, valid_to: { $gte: body.valid_from } }
+                ]
+            });
+            if (datefilter) {
+                return res.status(400).json({ msg: `error : room already booked` });
+            }
+            if (!roomdata) {
+                return res.status(400).json({ msg: `error : room not exist in booking` });
+            }
+            if (bookingdata) {
+                return res.status(400).json({ msg: `error : again booking please because room code already exist` });
+            }
+            const data = await booking.create(body);
+            console.log(data);
+            for (const item of service) {
+                const record = { service: item.service, booking: data.id };
+                const serviceData = await AdditionalService.findOne({ _id: item.service });
+                console.log(serviceData)
+                if (serviceData) {
+                    services.push(serviceData)
+                    AdditionalServiceData.push(record);
+                }
+            }
+            const addservice = await additional_booking.insertMany(AdditionalServiceData);
+
+            body.paymentstatus = "pending";
+            const update = await booking.findByIdAndUpdate(data.id, body);
+            bookingEmail(userfilter.email, roomdata.roomCode, services, body.totalBill);
+            return res.status(200).json({ msg: `Booking Registered`, totalbill: body.totalBill, Bookingdata: update, AdditionalService: addservice });
+
+
+        } catch (error) {
             return res.status(400).json({ msg: `error : ${error}` });
         }
     }

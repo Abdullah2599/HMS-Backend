@@ -22,5 +22,8 @@ class BookingController{
     async bookingcancel(req,res){
         await BookingService.bookingcancel(req,res)
     }
+    async createbydashboard(req,res){
+        await BookingService.createbydashboard(req,res)
+    }
 }
 module.exports=new BookingController;
