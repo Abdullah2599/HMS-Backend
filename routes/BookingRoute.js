@@ -8,5 +8,6 @@ BookingRouter.post("/listbyroom",BookingController.listbyroom)
 BookingRouter.get("/record/:code",BookingController.bookingRecord)
 BookingRouter.get("/guestbooking",BookingController.bookingRecordofGuest)
 BookingRouter.post("/datefilter",BookingController.datefilter)
+BookingRouter.post("/bookingupdate",BookingController.bookingupdate)
 BookingRouter.put("/cancelbooking/:id",BookingController.bookingcancel)
 module.exports=BookingRouter;

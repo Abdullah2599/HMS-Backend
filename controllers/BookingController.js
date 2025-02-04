@@ -25,5 +25,8 @@ class BookingController{
     async createbydashboard(req,res){
         await BookingService.createbydashboard(req,res)
     }
+    async bookingupdate(req,res){
+        await BookingService.bookingupdate(req,res)
+    }
 }
 module.exports=new BookingController;

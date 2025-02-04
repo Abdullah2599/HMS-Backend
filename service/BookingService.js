@@ -75,23 +75,32 @@ class BookingService {
         }
     }
 
-    async bookingstatus(req, res) {
+    async bookingupdate(req, res) {
         try {
             const id = req.params.id;
             const paymentstatus = req.body.paymentstatus;
-            const data = await booking.find().populate({
-                path: "service", populate: {
-                    path: "service",
-                    model: "additionalservice"
-                }
-            });
-
-            return res.status(200).json({ msg: `Booking listing`, Bookingdata: data });
-        }
-        catch (error) {
-            return res.status(400).json({ msg: `error : ${error}` });
+            
+            const data = await booking.findOne({ _id: id });
+            
+            if (!data) {
+                return res.status(400).json({ msg: 'Error: Booking not found' });
+            }
+            
+            if (data.paymentstatus=="paid") {
+                return res.status(400).json({ msg: 'Error: Payment already paid' });
+            }
+            const updatedBooking = await booking.findByIdAndUpdate(
+                id,
+                { paymentstatus: paymentstatus },
+                { new: true } 
+            );
+    
+            return res.status(200).json({ msg: 'Booking updated', Bookingdata: updatedBooking });
+        } catch (error) {
+            return res.status(400).json({ msg: `Error: ${error.message}` });
         }
     }
+    
 
     async listbyroom(req, res) {
         try {
