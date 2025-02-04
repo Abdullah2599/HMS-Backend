@@ -16,7 +16,7 @@ class HouseKeepingService{
                 return res.status(400).json({ msg: `maintenance type already inserted` }); 
             }
             const insert = await Maintenance.insertMany([data]);      
-            return res.status(400).json({ msg: `maintenance type inserted` }); 
+            return res.status(200).json({ msg: `maintenance type inserted` }); 
 
         } catch (error) {
             return res.status(400).json({ msg: `error : ${error}` });
@@ -32,7 +32,7 @@ class HouseKeepingService{
     }
     async taskAssign(req,res){
         try {
-            const data = (({maintenance,housekeeper,task,deadline})=>({maintenance,housekeeper,task,deadline}))(req.body)
+            const data = (({maintenance,housekeeper,task,deadline,priority,room})=>({maintenance,housekeeper,task,deadline,priority,room}))(req.body)
             if (!mongoose.isValidObjectId(data.housekeeper)) {
                 return res.status(400).json({ msg: "Invalid HouseKeeper ID" });
             }
@@ -40,15 +40,11 @@ class HouseKeepingService{
             if(filter){
                 return res.status(400).json({ msg: `Task Already Assign` }); 
             }
-            const today = new Date().setHours(0, 0, 0, 0);
-        const deadlineDate = new Date(data.deadline).setHours(0, 0, 0, 0);
-        if (deadlineDate < today) {
-            return res.status(400).json({ msg: "Please insert today's or a future date" });
-        }
+            
             const check = await user.findOne({_id:data.housekeeper}).populate("role")
             console.log(check)
             
-            if(check.role.role_name !== "HouseKeeping"){
+            if(check.role.role_name !== "housekeeping"){
                 return res.status(400).json({ msg: `Invalid HouseKeeper` });
             }
             const insert = await Task.insertMany([data]);      

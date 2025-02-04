@@ -33,7 +33,7 @@ app.use("/api/v1/permission",PermissionRouter)
 // Auth Based
 
 app.use("/api/v1/room",RoomRouter)
-app.use("/api/v1/housekeeping",HouseKeepingRouter)
+app.use("/api/v1/housekeeping",authMiddleware.verifyaccount,HouseKeepingRouter)
 app.use("/api/v1/facility",authMiddleware.verifyaccount,FacilityRouter)
-app.use("/api/v1/a_service",AdditionalServiceRouter)
+app.use("/api/v1/a_service",authMiddleware.verifyaccount,AdditionalServiceRouter)
 app.use("/api/v1/booking",authMiddleware.verifyaccount,BookingRouter)
