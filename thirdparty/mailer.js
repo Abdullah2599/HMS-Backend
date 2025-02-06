@@ -16,7 +16,7 @@ class Mailer{
             const info = await transporter.sendMail({
                 from: '"code verification" <ua5495404@gmail.com>',
                 to: email,
-                subject: "code verification",
+                subject: "Code Verification",
                 html: `
                 <html>
                     <head>
@@ -163,10 +163,9 @@ class Mailer{
                             <div class="details">
                                 <h3>Booking Details</h3>
                                 <p><strong>Room Code:</strong> ${roomData}</p>
-                                <p><strong>Extra Services:</strong> ${extraService || "None"}</p>
                             </div>
                             <div class="total">
-                                <p>Total Amount: <strong>${totalBill} Pkr</strong></p>
+                                <p>Total Amount: <strong>$ ${totalBill}</strong></p>
                             </div>
                             <div class="footer">
                                 <p>If you have any questions or need to make changes to your booking, feel free to contact us.</p>
