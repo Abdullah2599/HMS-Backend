@@ -13,5 +13,11 @@ class HouseKeepingController{
     async tasklist(req,res){
         await HouseKeepingService.tasklist(req,res)
     }
+    async taskread(req,res){
+        await HouseKeepingService.taskread(req,res)
+    }
+    async taskupdate(req,res){
+        await HouseKeepingService.taskupdate(req,res)
+    }
 }
 module.exports=new HouseKeepingController

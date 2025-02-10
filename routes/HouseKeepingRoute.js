@@ -6,4 +6,7 @@ HouseKeepingRouter.post("/maintenancecreate",HouseKeepingController.maintenancec
 HouseKeepingRouter.get("/maintenancelist",HouseKeepingController.maintenancelist)
 HouseKeepingRouter.post("/taskassign",HouseKeepingController.taskassign)
 HouseKeepingRouter.get("/tasklist/:id",HouseKeepingController.tasklist)
+HouseKeepingRouter.put("/taskread/:id",HouseKeepingController.taskread)
+HouseKeepingRouter.put("/taskupdate/:id",HouseKeepingController.taskupdate)
+
 module.exports=HouseKeepingRouter;
